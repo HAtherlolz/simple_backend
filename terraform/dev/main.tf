@@ -6,6 +6,7 @@ provider "aws" {
 # Define the GitHub provider, using the token specified in the variables
 provider "github" {
   token = var.github_token
+  owner = var.github_owner
 }
 
 # Read the local private key file, storing its contents for later use
@@ -19,11 +20,15 @@ resource "aws_key_pair" "dev_deployer" {
   public_key = file(var.public_key_path)
 }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
 # Define a security group for the development environment, allowing SSH, HTTP, and HTTPS inbound traffic
 resource "aws_security_group" "sg_dev_ssh" {
   name        = "sg_dev_ssh"
   description = "Allow SSH inbound traffic"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.default.id
 
   # Allow SSH traffic on port 22 from any IP address
   ingress {
@@ -62,7 +67,7 @@ resource "aws_security_group" "sg_dev_ssh" {
 resource "aws_instance" "dev" {
   ami           = var.ami_id
   instance_type = var.instance_type
-  security_groups = [aws_security_group.sg_dev_ssh.name]
+  vpc_security_group_ids = [aws_security_group.sg_dev_ssh.name]
   key_name      = aws_key_pair.dev_deployer.key_name
 
   # Set up the instance with Docker, Docker Compose, and Git, and configure SSH for GitHub access
@@ -129,7 +134,7 @@ resource "github_actions_secret" "dev_ec2_ip" {
 resource "github_actions_secret" "dev_ec2_user" {
   repository       = var.github_repository
   secret_name      = "DEV_EC2_USER"
-  plaintext_value  = "ec2-user"
+  plaintext_value  = "ec2_user"
 }
 
 # Store the private key for SSH access to the EC2 instance as a GitHub Actions secret

@@ -29,10 +29,13 @@ Note:
  and require Django's EMAIL_BACKEND to be properly configured.
 - Error handling is implemented to catch and respond to common issues such as bad header errors.
 """
-from django.core.mail import send_mail, BadHeaderError
-from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponse
-from django.utils.html import strip_tags
+from dataclasses import asdict
+from typing import Dict
+
+from django.template.loader import render_to_string
+
+from ..enums import EmailParams, EmailHTMLParams
+from ..tasks import bg_send_email, bg_send_email_from_html
 
 
 def send_email(subject, message, from_email, recipient_list):
@@ -48,13 +51,13 @@ def send_email(subject, message, from_email, recipient_list):
         HttpResponse: indicating whether the email was sent successfully
          or an error occurred during the process.
     """
-    try:
-        result = send_mail(subject, message, from_email, recipient_list)
-        return HttpResponse(f"Email sent successfully. Result: {result}")
-    except BadHeaderError as e:
-        return HttpResponse(f"Error in email header: {e}")
-    except Exception as e:
-        return HttpResponse(f"Error sending email: {e}")
+    params = EmailParams(
+        subject=subject,
+        message=message,
+        from_email=from_email,
+        recipient_list=recipient_list
+    )
+    bg_send_email.delay(asdict(params))
 
 
 def send_email_from_html(subject, html_content, from_email, recipient_list, text_content=None):
@@ -80,15 +83,21 @@ def send_email_from_html(subject, html_content, from_email, recipient_list, text
     Note: This method requires the 'django.utils.html' module to be imported.
 
     """
-    try:
-        # If no plain text content is provided, use a simple strip_tags as fallback
-        if not text_content:
-            text_content = strip_tags(html_content)
+    params = EmailHTMLParams(
+        subject=subject,
+        html_content=html_content,
+        from_email=from_email,
+        recipient_list=recipient_list,
+        text_content=text_content
+    )
+    bg_send_email_from_html.delay(asdict(params))
 
-        # Create an instance of EmailMultiAlternatives
-        msg = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
-        msg.attach_alternative(html_content, "text/html")  # Attach the HTML version
-        result = msg.send()  # Send the email
-        return HttpResponse(f"Email sent successfully. Result: {result}")
-    except Exception as e:
-        return HttpResponse(f"Error sending email: {e}")
+
+def html_to_message(template_path: str, variables: Dict) -> str:
+    """
+    Render the html with variables to string message
+    """
+    return render_to_string(
+        template_path,
+        variables
+    )

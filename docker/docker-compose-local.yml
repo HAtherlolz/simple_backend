@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  app:
+  simple_backend:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -11,18 +11,56 @@ services:
       - ../env_files/.env
     volumes:
       - ../backend:/usr/src/backend
-      - dev-static-data:/vol/web
+      - simple-backend-local-static-data:/vol/web
     depends_on:
-      - db
+      - simpledb
 
-  db:
+  celery_worker:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    env_file:
+      - ../env_files/.env
+    command: celery --workdir /usr/src/backend --app config worker -l INFO --concurrency=2 --max-memory-per-child=50000
+    depends_on:
+      - redis
+      - simpledb
+    volumes:
+      - ../backend:/usr/src/backend
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+
+#  celery_beat:
+#    build:
+#      context: ..
+#      dockerfile: ./docker/Dockerfile
+#    env_file:
+#      - ../env_files/.env
+#    command: celery --workdir /usr/src/backend --app config beat -l INFO
+#    depends_on:
+#      - redis
+#      - database
+#    volumes:
+#      - ../backend:/usr/src/backend
+
+  simpledb:
     image: postgres:16-alpine
     env_file:
       - ../env_files/.env
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
+      - simple-backend-local-db-data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - simple-backend-local-redis-data:/data
 
 volumes:
-  dev-db-data:
-  dev-static-data:
+  simple-backend-local-db-data:
+  simple-backend-local-static-data:
+  simple-backend-local-redis-data:

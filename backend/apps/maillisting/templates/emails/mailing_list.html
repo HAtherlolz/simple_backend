@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    "
+  >
+    <div
+      style="
+        max-width: 640px;
+        margin: 20px auto;
+        padding: 24px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <div style="padding: 32px;">
+        <h1
+          style="
+            font-size: 18px;
+            margin: 0 0 10px;
+            padding-bottom: 15px;
+          "
+        >
+          New client {{ client_full_name }} successfully fulfilled the form
+        </h1>
+          <h2
+          style="
+            font-size: 18px;
+            margin: 0 0 10px;
+            padding-bottom: 15px;
+          "
+        >
+          Client email - {{ client_email }}
+        </h2>
+          <h3
+          style="
+            font-size: 18px;
+            margin: 0 0 10px;
+            padding-bottom: 15px;
+          "
+        >
+          Message:
+        </h3>
+        <p
+          style="
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0 0 20px;
+            padding-bottom: 15px;
+            padding-top: 10px;
+          "
+        >
+            {{ client_message }}
+        </p>
+      </div>
+      <div
+        style="
+          font-size: 12px;
+          color: #888;
+          text-align: center;
+          padding: 15px 20px;
+          background: #f9f9f9;
+          border-top: 1px solid #e6e6e6;
+        "
+      >
+        <p style="margin: 0 0 10px;">
+          This email was sent to {{ user_email }}. If you received this email by mistake, please ignore it.
+        </p>
+        <p style="margin: 0;">© SKKD or DESK {{ year }}</p>
+      </div>
+    </div>
+  </body>
+</html>

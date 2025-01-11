@@ -54,6 +54,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
+SALT = os.environ.get('SALT', 'changeme')  # currently using only for itsdangerous
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
@@ -65,6 +66,24 @@ ALLOWED_HOSTS.extend(
         os.environ.get('ALLOWED_HOSTS', '').split(','),
     )
 )
+
+CSRF_TRUSTED_ORIGINS = [
+    f"http://{origin}" for origin in ALLOWED_HOSTS
+] + [
+    f"https://{origin}" for origin in ALLOWED_HOSTS
+]
+
+CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS.copy()
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
 
 # Application definition
 
@@ -101,9 +120,14 @@ INSTALLED_APPS = [
     # additional useful commands for django
     'django_extensions',
 
+    # cors settings
+    'corsheaders',
+
     # Internal modules
     'apps.core.apps.UserConfig',
     'apps.user.apps.UserConfig',
+    'apps.clients.apps.ClientsConfig',
+    'apps.maillisting.apps.MaillistingConfig',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +153,9 @@ MIDDLEWARE = [
 
     # sql_profiler
     'apps.core.middleware.sql_profiler.SQLProfilerMiddleware',
+
+    # cors middleware
+    'corsheaders.middleware.CorsMiddleware',
 ]
 # additional healthcheck settings
 HEALTH_CHECK_URL = os.environ.get('HEALTH_CHECK_URL', '/health/')
@@ -168,7 +195,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', '5432'),  # Default PostgreSQL port
     }
 }
-print(DATABASES)
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -239,17 +266,17 @@ REST_FRAMEWORK = {
 
 # Simple JWT/Token settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=24),
 
     'TOKEN_OBTAIN_SERIALIZER': 'apps.user.serializers.CustomTokenObtainPairSerializer',
 }
 
 # drf-spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'ProjectZero',
-    'DESCRIPTION': 'Template to start any project on Django/DRF',
-    'VERSION': '1.2.0',
+    'TITLE': 'PanterPay',
+    'DESCRIPTION': 'API Schema for PanterPay project.',
+    'VERSION': '0.0.1',
     'COMPONENT_SPLIT_REQUEST': True,
     'SERVE_INCLUDE_SCHEMA': False,
 }
@@ -285,3 +312,35 @@ ANYMAIL = {
     'MAILGUN_API_KEY': os.environ.get('MAILGUN_API_KEY', 'your-mailgun-api-key'),
     'MAILGUN_SENDER_DOMAIN': os.environ.get('MAILGUN_SENDER_DOMAIN', 'your-mailgun-domain.com'),
 }
+
+# Email Data
+EMAIL_CONFIRMATION_SUBJECT = "PantherPay Email Confirmation"
+PASSWORD_RESET_SUBJECT = "Reset Your Password"
+CHANGE_PASSWORD_SUBJECT = "Change Your Password"
+DEACTIVATING_CONFIRMATION_SUBJECT = "Deactivating Confirmation"
+
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://{os.environ.get('REDIS_HOST', 'redis')}:6379/1",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+
+        }
+    }
+}
+
+# Celery settings
+CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS_HOST', 'redis')}:6379/2"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Example of using the cache
+CACHE_TTL = 60 * 1  # Cache time-to-live in second
+
+DOMAIN: str = os.environ.get('DOMAIN', '0.0.0.0:8000')
+FRONTEND_URL: str = os.environ.get('FRONTEND_URL', '0.0.0.0:8000')

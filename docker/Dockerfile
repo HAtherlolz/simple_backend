@@ -1,5 +1,5 @@
 FROM python:3.12-alpine3.17
-LABEL maintainer="kulibabaroman6@gmail.com"
+LABEL maintainer="kirill.syusko17@gmail.com"
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -18,7 +18,7 @@ RUN pip install --upgrade pip && \
         build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     pip install poetry pylint && \
     poetry config virtualenvs.create false && \
-    poetry install --no-dev && \
+    poetry install --only main --no-root && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     adduser \
