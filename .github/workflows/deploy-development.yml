@@ -24,22 +24,26 @@ jobs:
         # Save the private key for SSH access
         echo "$PRIVATE_KEY" > aws_instance_key.pem
         chmod 600 aws_instance_key.pem
-
+    
+        # Add the AWS host key to known hosts to avoid host key verification failure
+        mkdir -p ~/.ssh
+        ssh-keyscan -H $AWS_HOST >> ~/.ssh/known_hosts
+    
         # SSH into the AWS instance
         ssh -i aws_instance_key.pem $AWS_USER@$AWS_HOST << EOF
           # Navigate to the project directory
           cd simple_backend
-
+    
           # Pull the latest changes from GitHub
           git pull origin main
-
+    
           # Rebuild the Docker containers
           docker-compose down
           docker-compose up -d --build
-
+    
           # Optionally clean up old images
           docker image prune -f
         EOF
-
+    
         # Clean up private key
         rm -f aws_instance_key.pem
