@@ -26,5 +26,4 @@ class ClientService:
             return None, err
 
         MailListingService.maillisting(client=client)
-        # TODO: Sends the emails to recipients  # pylint: disable=fixme
         return client, None

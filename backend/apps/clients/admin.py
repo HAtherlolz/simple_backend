@@ -12,8 +12,8 @@ class ClientAdmin(admin.ModelAdmin):
 
     Provides functionality to manage Client instances in the Django admin site.
     """
-    list_display = ('full_name', 'email', 'created_at')
-    search_fields = ('full_name', 'email')
+    list_display = ('full_name', 'email', 'phone_number', 'created_at')
+    search_fields = ('full_name', 'email', 'phone_number')
     list_filter = ('created_at',)
     readonly_fields = ('id', 'created_at')
     ordering = ('-created_at',)

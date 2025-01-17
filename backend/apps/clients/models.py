@@ -21,8 +21,21 @@ class Client(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=64, verbose_name=_('Full name'))
-    email = models.EmailField(max_length=128, verbose_name=_("Email"))
-    message = models.TextField(verbose_name=_("Message"))
+    email = models.EmailField(
+        max_length=128,
+        verbose_name=_("Email")
+    )
+    phone_number = models.CharField(
+        null=True,
+        blank=True,
+        max_length=15,
+        verbose_name=_("Phone number")
+    )
+    message = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Message")
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True,
