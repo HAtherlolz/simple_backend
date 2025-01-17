@@ -28,7 +28,7 @@ jobs:
         # SSH into the AWS instance
         ssh -i aws_instance_key.pem $AWS_USER@$AWS_HOST << EOF
           # Navigate to the project directory
-          cd /path/to/your/project
+          cd simple_backend
 
           # Pull the latest changes from GitHub
           git pull origin main
