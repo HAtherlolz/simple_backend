@@ -1,5 +1,5 @@
 """
-Database Client related models
+Database Maillisting related models
 """
 import uuid
 

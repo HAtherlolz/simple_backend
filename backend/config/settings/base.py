@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     'apps.user.apps.UserConfig',
     'apps.clients.apps.ClientsConfig',
     'apps.maillisting.apps.MaillistingConfig',
+    'apps.mailsender.apps.MailsenderConfig',
 ]
 
 MIDDLEWARE = [
@@ -248,6 +249,8 @@ MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'
 STATIC_ROOT = '/vol/web/static'
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
