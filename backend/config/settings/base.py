@@ -277,29 +277,32 @@ SIMPLE_JWT = {
 
 # drf-spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'PanterPay',
-    'DESCRIPTION': 'API Schema for PanterPay project.',
-    'VERSION': '0.0.1',
+    'TITLE': 'Complexity Solution Group API',
+    'DESCRIPTION': 'API Schema for Complexity Solution Group project.',
+    'VERSION': '0.1.0',
     'COMPONENT_SPLIT_REQUEST': True,
     'SERVE_INCLUDE_SCHEMA': False,
 }
 SHOW_DOCS = bool(int(os.environ.get('SHOW_DOCS', 1)))
 
 # Django Admin settings
-ADMIN_SITE_HEADER = os.environ.get('ADMIN_SITE_HEADER', 'ProjectZero')
-ADMIN_SITE_TITLE = os.environ.get('ADMIN_SITE_TITLE', 'ProjectZero')
-ADMIN_INDEX_TITLE = os.environ.get('ADMIN_INDEX_TITLE', 'Welcome to ProjectZero Admin Panel')
+ADMIN_SITE_HEADER = os.environ.get('ADMIN_SITE_HEADER', 'Complexity Solution Group')
+ADMIN_SITE_TITLE = os.environ.get('ADMIN_SITE_TITLE', 'Complexity Solution Group')
+ADMIN_INDEX_TITLE = os.environ.get('ADMIN_INDEX_TITLE', 'Welcome to Complexity Solution Group Admin Panel')
 ADMIN_SITE_URL = os.environ.get('ADMIN_SITE_URL', 'http://localhost:8000/admin/')
 
 # Anymail settings, you can use all of them or just delete/forget which you won't use
 # To choose which env going to use which service, go to {your-env}.py, and select EMAIL_BACKEND from the list there.
 
 # SMTP settings
-EMAIL_HOST = os.environ.get('SMTP_EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL_HOST_USER', 'your-email@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('SMTP_EMAIL_HOST_PASSWORD', 'your-password')
+# EMAIL_HOST = os.environ.get('SMTP_EMAIL_HOST', 'smtp.gmail.com')
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL_HOST_USER', 'your-email@gmail.com')
+# EMAIL_HOST_PASSWORD = os.environ.get('SMTP_EMAIL_HOST_PASSWORD', 'your-password')
+
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', "complexity.solution@gmail.com")
 
 ANYMAIL = {
     # SendGrid settings
