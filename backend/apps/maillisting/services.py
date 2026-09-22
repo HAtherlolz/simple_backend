@@ -73,6 +73,43 @@ class SendUserEmail:
         return str(now.year)
 
 
+class NewClientNotificationService:
+    """
+    Notifies the company inbox about a freshly submitted "Connect with us" form.
+
+    Unlike MailListingService, the recipient is static: it does not depend on the
+    Maillisting table, and the email is never sent to the client themselves.
+    """
+    _TEMPLATE = "emails/mailing_list.html"
+    _SUBJECT = "The new client fulfilled the form."
+    _RECIPIENTS = ["info@complexitysolution.com"]
+
+    @classmethod
+    def send_email(cls, client: Client) -> None:
+        """
+        Sends the notification about the new client to the static recipient list.
+
+        Args:
+            client (Client) - the newly created Client instance.
+        """
+        html_message = render_to_string(
+            cls._TEMPLATE,
+            {
+                'client_full_name': client.full_name,
+                'client_email': client.email,
+                'client_message': client.message,
+                'user_email': ", ".join(cls._RECIPIENTS),
+                'year': str(timezone.now().year),
+            }
+        )
+        send_email_from_html(
+            cls._SUBJECT,
+            html_message,
+            settings.DEFAULT_FROM_EMAIL,
+            cls._RECIPIENTS,
+        )
+
+
 class DailyClientsDigestService:
     """
     Builds and sends a single digest email listing every client that submitted

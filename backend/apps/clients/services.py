@@ -3,7 +3,7 @@ The file contains encapsulated business logic related to Client model.
 """
 from typing import Dict, Tuple, Optional
 
-from apps.maillisting.services import MailListingService
+from apps.maillisting.services import NewClientNotificationService
 
 from .models import Client
 from .repository import ClientRepository
@@ -19,11 +19,11 @@ class ClientService:
     @classmethod
     def create_client(cls, data: Dict) -> Tuple[Optional[Client], Optional[str]]:
         """
-        Creates the client instance and make email sending for all recipients.
+        Creates the client instance and notifies the company inbox about it.
         """
         client, err = cls._repo.create(data=data)
         if err:
             return None, err
 
-        MailListingService.maillisting(client=client)
+        NewClientNotificationService.send_email(client=client)
         return client, None
