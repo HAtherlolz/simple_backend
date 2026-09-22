@@ -33,18 +33,19 @@ services:
         limits:
           memory: 250M
 
-#  celery_beat:
-#    build:
-#      context: ..
-#      dockerfile: ./docker/Dockerfile
-#    env_file:
-#      - ../env_files/.env
-#    command: celery --workdir /usr/src/backend --app config beat -l INFO
-#    depends_on:
-#      - redis
-#      - database
-#    volumes:
-#      - ../backend:/usr/src/backend
+  celery_beat:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    env_file:
+      - ../env_files/.env
+    command: celery --workdir /usr/src/backend --app config beat -l INFO -s /tmp/celerybeat-schedule
+    depends_on:
+      - redis
+      - simpledb
+    volumes:
+      - ../backend:/usr/src/backend
 
   simpledb:
     image: postgres:16-alpine

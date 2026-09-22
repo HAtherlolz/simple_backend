@@ -59,7 +59,7 @@ class MailSender(models.Model):
             send_email(
                 subject=self.subject,
                 message=self.message,
-                from_email=settings.EMAIL_HOST_USER,
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[recipient]
             )
         super().save(*args, **kwargs)

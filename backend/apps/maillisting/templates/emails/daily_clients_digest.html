@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    "
+  >
+    <div
+      style="
+        max-width: 640px;
+        margin: 20px auto;
+        padding: 24px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <div style="padding: 32px;">
+        <h1 style="font-size: 20px; margin: 0 0 8px;">
+          {{ clients_count }} new client{{ clients_count|pluralize }} for the last 24 hours
+        </h1>
+        <p style="font-size: 13px; color: #777; margin: 0 0 24px;">
+          {{ period_start|date:"Y-m-d H:i" }} &ndash; {{ period_end|date:"Y-m-d H:i" }} UTC
+        </p>
+
+        {% for client in clients %}
+          <div
+            style="
+              border: 1px solid #eee;
+              border-radius: 6px;
+              padding: 16px;
+              margin-bottom: 16px;
+            "
+          >
+            <p style="font-size: 16px; font-weight: bold; margin: 0 0 6px;">
+              {{ client.full_name }}
+            </p>
+            <p style="font-size: 14px; margin: 0 0 4px;">
+              Email:
+              <a href="mailto:{{ client.email }}" style="color: #1a73e8;">{{ client.email }}</a>
+            </p>
+            {% if client.phone_number %}
+              <p style="font-size: 14px; margin: 0 0 4px;">
+                Phone: {{ client.phone_number }}
+              </p>
+            {% endif %}
+            <p style="font-size: 13px; color: #777; margin: 0 0 10px;">
+              Submitted: {{ client.created_at|date:"Y-m-d H:i" }} UTC
+            </p>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0; white-space: pre-line;">
+              {% if client.message %}{{ client.message }}{% else %}&mdash; no message &mdash;{% endif %}
+            </p>
+          </div>
+        {% endfor %}
+
+        <p style="font-size: 12px; color: #999; margin: 24px 0 0;">
+          &copy; {{ year }} Complexity Solution Group
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

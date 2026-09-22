@@ -1,3 +1,6 @@
+"""
+Celery application setup and the beat schedule for periodic tasks.
+"""
 from __future__ import absolute_import
 import os
 
@@ -13,10 +16,11 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 
-# CELERY BEAT TASKS # TODO: uncomment when start to use cron tasks. # pylint: disable=fixme
-# app.conf.beat_schedule = {
-#     "check-event-notification-every-minute": {
-#         "task": "apps.event.tasks.create_event_notification",
-#         "schedule": crontab(),  # each minute
-#     }
-# }
+# CELERY BEAT TASKS
+app.conf.beat_schedule = {
+    "send-daily-clients-digest": {
+        "task": "apps.maillisting.tasks.send_daily_clients_digest",
+        # 21:00 UTC == 00:00 Europe/Kyiv, so the digest covers the finished Kyiv day.
+        "schedule": crontab(hour=21, minute=0),
+    }
+}

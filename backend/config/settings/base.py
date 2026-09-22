@@ -291,18 +291,22 @@ ADMIN_SITE_TITLE = os.environ.get('ADMIN_SITE_TITLE', 'Complexity Solution Group
 ADMIN_INDEX_TITLE = os.environ.get('ADMIN_INDEX_TITLE', 'Welcome to Complexity Solution Group Admin Panel')
 ADMIN_SITE_URL = os.environ.get('ADMIN_SITE_URL', 'http://localhost:8000/admin/')
 
-# Anymail settings, you can use all of them or just delete/forget which you won't use
-# To choose which env going to use which service, go to {your-env}.py, and select EMAIL_BACKEND from the list there.
+# Email sending is done over plain SMTP (Gmail by default).
+# The anymail providers below are kept configured but unused; to switch back to one of them,
+# set EMAIL_BACKEND here (or in {your-env}.py) to the matching anymail backend.
 
 # SMTP settings
-# EMAIL_HOST = os.environ.get('SMTP_EMAIL_HOST', 'smtp.gmail.com')
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL_HOST_USER', 'your-email@gmail.com')
-# EMAIL_HOST_PASSWORD = os.environ.get('SMTP_EMAIL_HOST_PASSWORD', 'your-password')
+EMAIL_HOST = os.environ.get('SMTP_EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('SMTP_EMAIL_PORT', 587))
+# Port 587 uses STARTTLS, port 465 uses implicit SSL. They are mutually exclusive.
+EMAIL_USE_TLS = bool(int(os.environ.get('SMTP_EMAIL_USE_TLS', 1)))
+EMAIL_USE_SSL = bool(int(os.environ.get('SMTP_EMAIL_USE_SSL', 0)))
+EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_EMAIL_HOST_PASSWORD', '')
 
-EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', "complexity.solution@gmail.com")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Gmail rewrites the From header to the authenticated account anyway, so keep them in sync.
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 ANYMAIL = {
     # SendGrid settings
@@ -324,6 +328,13 @@ EMAIL_CONFIRMATION_SUBJECT = "PantherPay Email Confirmation"
 PASSWORD_RESET_SUBJECT = "Reset Your Password"
 CHANGE_PASSWORD_SUBJECT = "Change Your Password"
 DEACTIVATING_CONFIRMATION_SUBJECT = "Deactivating Confirmation"
+
+# Recipients of the daily digest of new clients, comma separated.
+DAILY_DIGEST_RECIPIENTS = [
+    email.strip()
+    for email in os.environ.get('DAILY_DIGEST_RECIPIENTS', 'info@complexitysolution.com').split(',')
+    if email.strip()
+]
 
 
 # Cache settings
