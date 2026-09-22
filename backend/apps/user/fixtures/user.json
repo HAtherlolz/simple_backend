@@ -19,5 +19,26 @@
         "groups": [],
         "user_permissions": []
     }
+  },
+  {
+    "model": "user.user",
+    "pk": "0f71f1da-ae6a-4ac7-98ce-9ff8dcd91dcf",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$9EubtRefpjVWCFHTwMVUWe$9ZCntUWZqyVe0MM+OIX1ZS2RYFt0qtai9osQ5qF589A=",
+        "last_login": null,
+        "is_superuser": true,
+        "email": "admin@complexitysolution.com",
+        "avatar": "",
+        "username": "ComplexityAdmin",
+        "first_name": "Complexity",
+        "last_name": "Admin",
+        "full_name": "Complexity Admin",
+        "is_active": true,
+        "is_staff": true,
+        "role": "admin",
+        "date_joined": "2025-01-11",
+        "groups": [],
+        "user_permissions": []
+    }
   }
 ]
