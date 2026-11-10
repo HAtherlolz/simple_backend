@@ -1,8 +1,16 @@
 version: "3.9"
 
+# Cap container logs: max 3 files x 10 MB per container (Docker default is unlimited)
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   app:
     restart: on-failure
+    logging: *default-logging
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -23,6 +31,7 @@ services:
 
   celery_worker:
     restart: on-failure
+    logging: *default-logging
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -41,6 +50,7 @@ services:
 
   celery_beat:
     restart: on-failure
+    logging: *default-logging
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -55,6 +65,7 @@ services:
 
   db:
     image: postgres:16-alpine
+    logging: *default-logging
     env_file:
       - ../env_files/.env
     volumes:
@@ -62,6 +73,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    logging: *default-logging
     ports:
       - "6379:6379"
     volumes:
